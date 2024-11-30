@@ -6,16 +6,22 @@ class TestRobot(wpilib.TimedRobot):
         # Initialize joystick on port 0 (USB port in Driver Station)
         self.joystick = wpilib.Joystick(0)
 
-        self.motor = hardware.TalonFX(6, "rio")
+        # Initialize TalonFX motor controllers
+        self.motor6 = hardware.TalonFX(6, "rio")  # Motor 6
+        self.motor5 = hardware.TalonFX(5, "rio")  # Motor 5
 
     def teleopPeriodic(self):
-        # Create a duty cycle control object
-        control_signal = controls.DutyCycleOut(0.5)
-        # Apply the control to the motor
-        self.motor.set_control(control_signal)
+        # Read the joystick axes
+        left_y = -self.joystick.getRawAxis(1)  # Left joystick Y-axis
+        right_x = self.joystick.getRawAxis(4)  # Right joystick X-axis
 
+        # Create duty cycle control signals from joystick inputs
+        motor6_control = controls.DutyCycleOut(left_y)
+        motor5_control = controls.DutyCycleOut(right_x)
 
+        # Apply the controls to the respective motors
+        self.motor6.set_control(motor6_control)
+        self.motor5.set_control(motor5_control)
 
 if __name__ == "__main__":
     wpilib.run(TestRobot)
-
