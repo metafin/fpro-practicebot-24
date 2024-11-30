@@ -1,4 +1,5 @@
 import wpilib
+import phoenix5
 
 class TestRobot(wpilib.TimedRobot):
     def robotInit(self):
@@ -13,6 +14,9 @@ class TestRobot(wpilib.TimedRobot):
             3: {"port": 2, "output": wpilib.DigitalOutput(2), "state": False},  # Button 3 controls blue light
         }
 
+        self.motor = phoenix5.TalonSRX(6)  # Replace with your motor controller class if different
+        self.motor.setNeutralMode(phoenix5.NeutralMode.Brake)  # Set motor to brake when not running (optional)
+
     def teleopPeriodic(self):
         # Iterate through each light in the dictionary
         for button, light in self.lights.items():
@@ -23,7 +27,13 @@ class TestRobot(wpilib.TimedRobot):
                 light["output"].set(light["state"])
 
                 # Optional: Print the current state for debugging
-                print(f"Light on port {light['port']} (Button {button}) state: {light['state']}")
+                # print(f"Light on port {light['port']} (Button {button}) state: {light['state']}")
+
+        if self.joystick.getRawButton(4):  # Button 4 runs the motor
+            self.motor.set(phoenix5.ControlMode.PercentOutput, 0.5)  # Run motor at 50% power
+        else:
+            self.motor.set(phoenix5.ControlMode.PercentOutput, 0.0)  # Stop the motor
+
 
 if __name__ == "__main__":
     wpilib.run(TestRobot)
