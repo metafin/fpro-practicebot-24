@@ -15,9 +15,12 @@ class TestRobot(wpilib.TimedRobot):
         left_y = -self.joystick.getRawAxis(1)  # Left joystick Y-axis
         right_x = self.joystick.getRawAxis(4)  # Right joystick X-axis
 
+        # Scale the speed of motor 5 to 25%
+        right_x_scaled = right_x * 0.25
+
         # Create duty cycle control signals from joystick inputs
         motor6_control = controls.DutyCycleOut(left_y)
-        motor5_control = controls.DutyCycleOut(right_x)
+        motor5_control = controls.DutyCycleOut(right_x_scaled)
 
         # Apply the controls to the respective motors
         self.motor6.set_control(motor6_control)
