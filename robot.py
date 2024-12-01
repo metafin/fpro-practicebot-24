@@ -10,6 +10,13 @@ class TestRobot(wpilib.TimedRobot):
         self.motor6 = hardware.TalonFX(6, "rio")  # Motor 6
         self.motor5 = hardware.TalonFX(5, "rio")  # Motor 5
 
+        # Dictionary to manage lights and their states
+        # Key: Button number, Value: Tuple (DIO port, DigitalOutput object, state)
+        self.lights = {
+            1: {"port": 0, "output": wpilib.DigitalOutput(0), "state": False},  # Button 1 controls red light
+            2: {"port": 1, "output": wpilib.DigitalOutput(1), "state": False},  # Button 2 controls green light
+        }
+
     def teleopPeriodic(self):
         # Read the joystick axes
         left_y = -self.joystick.getRawAxis(1)  # Left joystick Y-axis
@@ -25,6 +32,17 @@ class TestRobot(wpilib.TimedRobot):
         # Apply the controls to the respective motors
         self.motor6.set_control(motor6_control)
         self.motor5.set_control(motor5_control)
+
+        # Iterate through each light in the dictionary
+        for button, light in self.lights.items():
+            # Check if the button assigned to this light is pressed
+            if self.joystick.getRawButtonPressed(button):
+                # Toggle the light's state
+                light["state"] = not light["state"]
+                light["output"].set(light["state"])
+
+                # Optional: Print the current state for debugging
+                # print(f"Light on port {light['port']} (Button {button}) state: {light['state']}")
 
 if __name__ == "__main__":
     wpilib.run(TestRobot)
